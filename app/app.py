@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from models import db, Product
 
 app = Flask(__name__)
@@ -35,6 +35,26 @@ def about():
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+
+    if request.method == "POST":
+
+        product = Product(
+            name=request.form["name"],
+            price=float(request.form["price"]),
+            category=request.form["category"],
+            image=request.form["image"]
+        )
+
+        db.session.add(product)
+        db.session.commit()
+
+        return redirect(url_for("admin"))
+
+    products = Product.query.all()
+
+    return render_template("admin.html", products=products)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
