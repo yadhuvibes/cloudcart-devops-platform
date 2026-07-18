@@ -4,43 +4,89 @@
 
 <h2>CloudCart Admin Dashboard</h2>
 
+<p>
+    Welcome <strong>{{ username }}</strong>
+</p>
+
+<p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</p>
+
+<hr>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color:green;">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<h3>Add New Product</h3>
+
 <form method="POST">
 
-    <p>
-        Product Name
-    </p>
+    <label>Product Name</label>
+    <input type="text" name="name" required>
 
-    <input type="text"
-           name="name"
-           required>
+    <br><br>
 
-    <p>
-        Price
-    </p>
+    <label>Description</label>
+    <textarea name="description"
+              rows="4"
+              class="form-control"
+              required></textarea>
 
+    <br>
+
+    <label>Price</label>
     <input type="number"
            step="0.01"
            name="price"
            required>
 
-    <p>
-        Category
-    </p>
+    <br><br>
 
+    <label>Category</label>
     <input type="text"
            name="category"
            required>
 
-    <p>
-        Image URL
-    </p>
+    <br><br>
 
+    <label>Brand</label>
+    <input type="text"
+           name="brand"
+           required>
+
+    <br><br>
+
+    <label>Stock</label>
+    <input type="number"
+           name="stock"
+           required>
+
+    <br><br>
+
+    <label>Rating</label>
+    <input type="number"
+           step="0.1"
+           min="0"
+           max="5"
+           name="rating"
+           required>
+
+    <br><br>
+
+    <label>Image URL</label>
     <input type="text"
            name="image">
 
     <br><br>
 
-    <button type="submit">
+    <button class="btn btn-warning">
 
         Add Product
 
@@ -52,18 +98,56 @@
 
 <h3>Current Products</h3>
 
-{% for product in products %}
+{% if products %}
 
-<div class="card">
+<table border="1" cellpadding="10">
 
-    <h3>{{ product.name }}</h3>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Image</th>
+    </tr>
 
-    <p>₹ {{ product.price }}</p>
+    {% for product in products %}
 
-    <p>{{ product.category }}</p>
+    <tr>
 
-</div>
+        <td>{{ product.id }}</td>
 
-{% endfor %}
+        <td>{{ product.name }}</td>
+
+        <td>₹ {{ product.price }}</td>
+
+        <td>{{ product.category }}</td>
+
+        <td>
+
+            {% if product.image %}
+
+                <img
+                    src="{{ product.image }}"
+                    width="80">
+
+            {% else %}
+
+                No Image
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No products available.</p>
+
+{% endif %}
 
 {% endblock %}

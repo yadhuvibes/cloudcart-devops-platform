@@ -2,8 +2,128 @@
 
 {% block content %}
 
-<h2>Products</h2>
+<div class="container">
 
-<p>Products page coming soon...</p>
+    <div class="text-center mb-5">
+
+        <h1>Our Products</h1>
+
+        <p class="text-muted">
+
+            Browse our latest CloudCart products
+
+        </p>
+
+    </div>
+
+    {% if search %}
+
+    <div class="alert alert-info">
+
+        Search Results for:
+
+        <strong>{{ search }}</strong>
+
+    </div>
+
+    {% endif %}
+
+    {% if products %}
+
+    <div class="row">
+
+        {% for product in products %}
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                {% if product.image %}
+
+                <img src="{{ product.image }}"
+                     class="card-img-top"
+                     style="height:250px; object-fit:cover;">
+
+                {% else %}
+
+                <img src="https://via.placeholder.com/400x250?text=CloudCart"
+                     class="card-img-top">
+
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+
+                        {{ product.name }}
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        {{ product.brand }}
+
+                    </p>
+
+                    <h4 class="text-warning">
+
+                        ₹ {{ product.price }}
+
+                    </h4>
+
+                    <span class="badge bg-primary">
+
+                        {{ product.category }}
+
+                    </span>
+
+                    <p class="mt-3">
+
+                        ⭐ {{ product.rating }}/5
+
+                    </p>
+
+                    <p>
+
+                        Stock Available:
+
+                        <strong>{{ product.stock }}</strong>
+
+                    </p>
+
+                    <a href="/product/{{ product.id }}"
+                       class="btn btn-warning w-100">
+
+                        View Details
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="text-center">
+
+        <h3>No Products Found</h3>
+
+        <p>
+
+            Try another search or add products from the Admin Dashboard.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}
