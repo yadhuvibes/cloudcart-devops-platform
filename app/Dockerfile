@@ -4,26 +4,31 @@ FROM python:3.11-slim
 # Maintainer
 LABEL maintainer="Yadhukrishna PR"
 
-# Prevent Python from creating .pyc files
+# Python settings
 ENV PYTHONDONTWRITEBYTECODE=1
-
-# Display Python output immediately
 ENV PYTHONUNBUFFERED=1
 
-# Working directory
+# Working Directory
 WORKDIR /app
 
-# Copy dependency file first
-COPY requirements.txt .
+# Install curl for Docker health checks
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source
+# Copy application
 COPY . .
 
-# Flask Port
+# Expose Flask Port
 EXPOSE 5000
 
-# Start application
-CMD ["python", "app.py"]
+# Health Check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+CMD curl -f http://localhost:5000/health || exit 1
+
+# Start using Gunicorn
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:5000", "app:app"]
