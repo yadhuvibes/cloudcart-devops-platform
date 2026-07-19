@@ -17,11 +17,12 @@ pipeline {
 
         stage('Deploy Application') {
             steps {
-                sh '''
-                cd app
-                docker compose down || true
-                docker compose up -d
-                '''
+                dir('app') {
+                    sh '''
+                    docker compose down || true
+                    docker compose up -d --force-recreate
+                    '''
+                }
             }
         }
 

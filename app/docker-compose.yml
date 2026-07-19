@@ -1,7 +1,7 @@
 services:
 
   cloudcart:
-    image: cloudcart:v2
+    image: cloudcart:latest
     container_name: cloudcart-app
 
     ports:
