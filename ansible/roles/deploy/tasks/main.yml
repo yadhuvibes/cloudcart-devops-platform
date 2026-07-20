@@ -1,0 +1,27 @@
+---
+- name: Update CloudCart Repository
+  git:
+    repo: "https://github.com/yadhuvibes/cloudcart-devops-platform.git"
+    dest: /home/ec2-user/cloudcart-devops-platform
+    version: main
+    force: yes
+  become: no
+  register: git_result
+
+- name: Show Git Status
+  debug:
+    msg: "Repository Updated = {{ git_result.changed }}"
+
+- name: Build Docker Image
+  shell: docker build -t cloudcart:latest .
+  args:
+    chdir: /home/ec2-user/cloudcart-devops-platform/app
+  when: git_result.changed
+
+- name: Restart Containers
+  shell: |
+    docker compose down
+    docker compose up -d
+  args:
+    chdir: /home/ec2-user/cloudcart-devops-platform/app
+  when: git_result.changed

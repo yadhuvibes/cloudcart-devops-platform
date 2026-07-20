@@ -1,0 +1,9 @@
+---
+- name: CloudCart Automation
+  hosts: cloudcart
+  become: yes
+
+  roles:
+    - server_setup
+    - deploy
+    - verify

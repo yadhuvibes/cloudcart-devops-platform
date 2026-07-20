@@ -1,0 +1,2 @@
+[cloudcart]
+localhost ansible_connection=local

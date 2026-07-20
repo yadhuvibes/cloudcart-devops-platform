@@ -1,0 +1,41 @@
+---
+- name: Check Docker Service
+  service_facts:
+
+- name: Verify Docker Service
+  debug:
+    msg: "Docker service is running."
+  when: ansible_facts.services['docker.service'].state == "running"
+
+- name: Check CloudCart Container
+  shell: docker ps --filter "name=cloudcart-app" --format "{{'{{'}}.Names{{'}}'}}"
+  register: cloudcart_container
+  changed_when: false
+
+- name: Verify CloudCart Container
+  debug:
+    msg: "CloudCart container is running."
+  when: cloudcart_container.stdout == "cloudcart-app"
+
+- name: Check Nginx Container
+  shell: docker ps --filter "name=cloudcart-nginx" --format "{{'{{'}}.Names{{'}}'}}"
+  register: nginx_container
+  changed_when: false
+
+- name: Verify Nginx Container
+  debug:
+    msg: "Nginx container is running."
+  when: nginx_container.stdout == "cloudcart-nginx"
+
+- name: Verify Website
+  uri:
+    url: http://localhost
+    method: GET
+    status_code: 200
+    return_content: no
+  register: website_check
+
+- name: Deployment Success
+  debug:
+    msg: "CloudCart deployment verified successfully!"
+  when: website_check.status == 200
