@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: cloudcart
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: cloudcart
+
+  template:
+    metadata:
+      labels:
+        app: cloudcart
+
+    spec:
+      containers:
+      - name: cloudcart
+
+        image: cloudcart:latest
+
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 5000
