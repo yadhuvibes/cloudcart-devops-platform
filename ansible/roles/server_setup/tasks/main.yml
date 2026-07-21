@@ -9,6 +9,25 @@
     name: docker
     state: present
 
+- name: Check if Docker Compose exists
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: compose_binary
+
+- name: Install Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+  when: not compose_binary.stat.exists
+
+- name: Create docker compose symlink
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/bin/docker-compose
+    state: link
+  when: not compose_binary.stat.exists
+
 - name: Start Docker
   service:
     name: docker
@@ -18,3 +37,9 @@
   service:
     name: docker
     enabled: yes
+
+- name: Add ec2-user to docker group
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes

@@ -16,12 +16,10 @@
   shell: docker build -t cloudcart:latest .
   args:
     chdir: /home/ec2-user/cloudcart-devops-platform/app
-  when: git_result.changed
 
 - name: Restart Containers
   shell: |
-    docker compose down
-    docker compose up -d
+    docker-compose down
+    docker-compose up -d
   args:
     chdir: /home/ec2-user/cloudcart-devops-platform/app
-  when: git_result.changed

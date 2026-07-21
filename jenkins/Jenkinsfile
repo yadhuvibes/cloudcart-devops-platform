@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_DIR = "${WORKSPACE}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init -backend=false'
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Run Ansible') {
+            steps {
+                dir('ansible') {
+                    sh 'ansible-playbook -i inventory/hosts playbooks/site.yml'
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                curl -I http://15.206.191.133
+                '''
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo "CloudCart deployed successfully."
+        }
+
+        failure {
+            echo "Deployment Failed!"
+        }
+    }
+}
