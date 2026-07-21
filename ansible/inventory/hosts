@@ -1,2 +1,7 @@
 [cloudcart]
-15.206.191.133 ansible_user=ec2-user ansible_ssh_private_key_file=/home/ec2-user/rhel.pem
+15.206.191.133
+
+[cloudcart:vars]
+ansible_user=ec2-user
+ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/rhel.pem
+ansible_python_interpreter=/usr/bin/python3

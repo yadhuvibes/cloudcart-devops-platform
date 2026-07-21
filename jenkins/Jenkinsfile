@@ -13,6 +13,14 @@ pipeline {
             }
         }
 
+        stage('Terraform Format Check') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform fmt -check'
+                }
+            }
+        }
+
         stage('Terraform Validate') {
             steps {
                 dir('terraform') {
@@ -22,31 +30,62 @@ pipeline {
             }
         }
 
-        stage('Run Ansible') {
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t cloudcart:latest app
+                '''
+            }
+        }
+
+        stage('Deploy with Ansible') {
             steps {
                 dir('ansible') {
-                    sh 'ansible-playbook -i inventory/hosts playbooks/site.yml'
+                    sh '''
+                    ansible-playbook \
+                    -i inventory/hosts \
+                    playbooks/site.yml
+                    '''
                 }
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Verify Containers') {
             steps {
                 sh '''
-                curl -I http://15.206.191.133
+                ssh -o StrictHostKeyChecking=no \
+                -i /var/lib/jenkins/.ssh/rhel.pem \
+                ec2-user@15.206.191.133 \
+                "docker ps"
                 '''
             }
         }
+
+        stage('Application Health Check') {
+            steps {
+                sh '''
+                curl --fail http://15.206.191.133
+                '''
+            }
+        }
+
     }
 
     post {
 
         success {
-            echo "CloudCart deployed successfully."
+            echo "CloudCart Deployment Successful"
         }
 
         failure {
-            echo "Deployment Failed!"
+            echo "Deployment Failed"
+
+            sh '''
+            ssh -o StrictHostKeyChecking=no \
+            -i /var/lib/jenkins/.ssh/rhel.pem \
+            ec2-user@15.206.191.133 \
+            "cd ~/cloudcart-devops-platform/app && docker-compose restart"
+            '''
         }
     }
 }
