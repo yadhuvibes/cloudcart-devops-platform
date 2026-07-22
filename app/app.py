@@ -1,4 +1,5 @@
 from flask import (
+
     Flask,
     render_template,
     request,
@@ -11,9 +12,11 @@ from flask import (
 
 from models import db, Product
 from config import Config
-
+from prometheus_flask_exporter import PrometheusMetrics
 app = Flask(__name__)
 app.config.from_object(Config)
+
+metrics = PrometheusMetrics(app)
 
 db.init_app(app)
 
