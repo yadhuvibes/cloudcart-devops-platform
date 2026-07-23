@@ -432,6 +432,15 @@ Real-time visualization of infrastructure and application metrics.
 
 ---
 
+## 📁 GitHub Repository
+
+The complete source code, infrastructure automation, Kubernetes manifests, CI/CD pipeline, monitoring configuration, and documentation are available in this GitHub repository.
+
+<p align="center">
+  <img src="screenshots/github-repository.png" alt="GitHub Repository" width="95%">
+</p>
+
+
 
 ---
 
